@@ -36,11 +36,15 @@ export const ColumnsSidebar: React.FC = () => {
               </div>
               <div className="column-info" onClick={() => setSort(h)}>
                 <span className="h-name">{h}</span>
-                {sortSettings.column === h && (
-                  <span className="sort-icon">
-                    {sortSettings.direction === 'asc' ? <ArrowUp size={10} /> : <ArrowDown size={10} />}
-                  </span>
-                )}
+                {(() => {
+                  const criterion = sortSettings.criteria.find(c => c.column === h);
+                  if (!criterion) return null;
+                  return (
+                    <span className="sort-icon">
+                      {criterion.direction === 'asc' ? <ArrowUp size={10} /> : <ArrowDown size={10} />}
+                    </span>
+                  );
+                })()}
               </div>
               <button 
                 className="add-btn" 
