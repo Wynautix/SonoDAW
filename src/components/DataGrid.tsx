@@ -50,6 +50,17 @@ export const DataGrid: React.FC = () => {
   const [showStylesOverlay, setShowStylesOverlay] = useState(false);
 
   const allHeaders = [...headers, ...virtualHeaders];
+  
+  const getCellColor = (value: any, columnName: string) => {
+    if (typeof value !== 'number') return 'transparent';
+    const stats = columnStats[columnName];
+    if (!stats) return 'var(--accent-primary)';
+    
+    const percentage = ((value - stats.min) / (stats.max - stats.min)) * 100;
+    const clamped = Math.max(0, Math.min(100, percentage));
+    const hue = (clamped * 3.6);
+    return `hsl(${hue}, 100%, 60%)`;
+  };
 
   const handleExport = () => {
     if (!csvData) return;
@@ -190,43 +201,57 @@ export const DataGrid: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {csvData.map((row, idx) => (
-              <tr 
-                key={idx} 
-                className={currentRow === idx ? 'playing' : ''}
-                ref={currentRow === idx ? playingRowRef : null}
-              >
-                <td className="row-num" onClick={() => (window as any).setCurrentRow?.(idx)}>{idx + 1}</td>
-                {allHeaders.map(h => (
-                  <td key={h} className={virtualHeaders.includes(h) ? 'virtual' : ''}>
-                    {typeof row[h] === 'number' ? (
-                      <div className="cell-content">
-                        <ColumnStat 
-                          value={row[h]} 
-                          min={columnStats[h]?.min || 0} 
-                          max={columnStats[h]?.max || 1} 
-                          mode={gridConfig.barMode}
-                          idleStops={gridConfig.idleGradient}
-                          highlightStops={gridConfig.highlightGradient}
-                          isHighlighted={currentRow === idx}
-                        />
-                        {currentRow === idx && (() => {
-                          const track = project.tracks.find(t => t.mapping.columnName === h);
-                          const activeNote = track ? activeNotes[track.id] : null;
-                          return activeNote ? (
-                            <div className="note-indicator fade-in">
-                              <span className="note-name">{activeNote}</span>
-                            </div>
-                          ) : null;
-                        })()}
-                      </div>
-                    ) : (
-                      String(row[h])
-                    )}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {csvData.map((row, idx) => {
+              // Row color based on primary numeric column or average
+              const firstNumHeader = allHeaders.find(h => typeof row[h] === 'number');
+              const rowColor = firstNumHeader ? getCellColor(row[firstNumHeader], firstNumHeader) : 'var(--accent-primary)';
+              
+              return (
+                <tr 
+                  key={idx} 
+                  className={currentRow === idx ? 'playing' : ''}
+                  ref={currentRow === idx ? playingRowRef : null}
+                  style={{ '--row-color': rowColor } as any}
+                >
+                  <td className="row-num" onClick={() => (window as any).setCurrentRow?.(idx)}>{idx + 1}</td>
+                  {allHeaders.map(h => {
+                    const cellColor = getCellColor(row[h], h);
+                    return (
+                      <td 
+                        key={h} 
+                        className={virtualHeaders.includes(h) ? 'virtual' : ''}
+                        style={{ '--cell-color': cellColor } as any}
+                      >
+                        {typeof row[h] === 'number' ? (
+                          <div className="cell-content">
+                            <ColumnStat 
+                              value={row[h]} 
+                              min={columnStats[h]?.min || 0} 
+                              max={columnStats[h]?.max || 1} 
+                              mode={gridConfig.barMode}
+                              idleStops={[cellColor, cellColor]}
+                              highlightStops={['#fff', cellColor]}
+                              isHighlighted={currentRow === idx}
+                            />
+                            {currentRow === idx && (() => {
+                              const track = project.tracks.find(t => t.mapping.columnName === h);
+                              const activeNote = track ? activeNotes[track.id] : null;
+                              return activeNote ? (
+                                <div className="note-indicator fade-in">
+                                  <span className="note-name">{activeNote}</span>
+                                </div>
+                              ) : null;
+                            })()}
+                          </div>
+                        ) : (
+                          String(row[h])
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
