@@ -159,22 +159,34 @@ export const DataGrid: React.FC = () => {
           <thead>
             <tr>
               <th className="row-num">#</th>
-              {allHeaders.map(h => (
-                <th 
-                  key={h} 
-                  onClick={() => setSort(h)}
-                  className={`sortable ${sortSettings.column === h ? 'sorted' : ''} ${virtualHeaders.includes(h) ? 'virtual' : ''}`}
-                >
-                  <div className="header-cell">
-                    {h}
-                    {sortSettings.column === h && (
-                      <span className="sort-arrow">
-                        {sortSettings.direction === 'asc' ? '↑' : '↓'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              ))}
+              {allHeaders.map(h => {
+                const sortIndex = sortSettings.criteria.findIndex(c => c.column === h);
+                const criterion = sortIndex > -1 ? sortSettings.criteria[sortIndex] : null;
+                
+                return (
+                  <th 
+                    key={h} 
+                    onClick={(e) => setSort(h, e.shiftKey)}
+                    className={`sortable ${criterion ? 'sorted' : ''} ${virtualHeaders.includes(h) ? 'virtual' : ''}`}
+                  >
+                    <div className="header-cell">
+                      {h}
+                      {criterion && (
+                        <div className="sort-indicators">
+                          <span className="sort-arrow">
+                            {criterion.direction === 'asc' ? '↑' : '↓'}
+                          </span>
+                          {sortSettings.criteria.length > 1 && (
+                            <span className="sort-priority" title={`Sort Priority: ${sortIndex + 1}`}>
+                              {sortIndex + 1}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>

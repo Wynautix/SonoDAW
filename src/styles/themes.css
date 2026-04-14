@@ -91,15 +91,34 @@
   --accent-primary: #ff00ff;
   --accent-secondary: #00ffff;
   --bg-dark: #000;
-  --bg-panel: rgba(10, 10, 10, 0.7);
-  --bg-item: rgba(30, 30, 30, 0.5);
-  --bg-header: rgba(50, 0, 50, 0.6);
+  --bg-panel: rgba(15, 10, 25, 0.85);
+  --bg-item: rgba(30, 20, 45, 0.6);
+  --bg-header: rgba(60, 0, 80, 0.75);
   --border: #ff00ff;
   --text-main: #fff;
   --text-dim: #00ffff;
   --font-main: 'JetBrains Mono', monospace;
   --panel-radius: 0px;
   --glow-color: #ff00ff;
+}
+
+.theme-unicorn.daw-layout {
+  background: radial-gradient(circle at center, #1a001a 0%, #000 100%);
+  position: relative;
+}
+
+.theme-unicorn.daw-layout::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, rgba(255, 0, 255, 0.05) 0%, rgba(0, 255, 255, 0.05) 100%);
+  animation: pulse-bg 10s ease-infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes pulse-bg {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.8; }
 }
 
 .theme-unicorn * {
@@ -111,8 +130,9 @@
 .theme-unicorn .channel-strip,
 .theme-unicorn .vst-container {
   border: 1px solid var(--accent-primary);
-  box-shadow: 0 0 15px rgba(255, 0, 255, 0.3), inset 0 0 5px rgba(255, 0, 255, 0.2);
-  animation: rgb-flow 8s infinite linear;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.4), inset 0 0 8px rgba(255, 0, 255, 0.3);
+  animation: rgb-flow 5s infinite linear;
+  backdrop-filter: blur(10px);
 }
 
 .theme-unicorn .text-gradient,

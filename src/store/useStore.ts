@@ -73,7 +73,7 @@ interface AppState {
   };
   
   // New Features State
-  sortSettings: { column: string | null; direction: 'asc' | 'desc' };
+  sortSettings: { criteria: Array<{ column: string; direction: 'asc' | 'desc' }> };
   scaleSettings: { root: string; mode: ScaleMode };
   formulas: Record<string, string>;
   runtimeOutputs: {
@@ -88,7 +88,7 @@ interface AppState {
   updateTrackMapping: (trackId: string, mapping: Partial<ColumnMapping>) => void;
   togglePlayback: () => void;
   setActiveTrack: (id: string | null) => void;
-  setSort: (column: string | null) => void;
+  setSort: (column: string | null, multi?: boolean) => void;
   setScale: (scale: Partial<{ root: string; mode: ScaleMode }>) => void;
   updateFormula: (name: string, formula: string) => void;
   removeFormula: (name: string) => void;
@@ -142,7 +142,7 @@ export const useStore = create<AppState>((set, get) => ({
   viewMode: 'analytics',
   currentRow: 0,
   activeNotes: {},
-  sortSettings: (defaultProject as any).sortSettings || { column: null, direction: 'asc' },
+  sortSettings: { criteria: [] },
   scaleSettings: (defaultProject as any).scaleSettings || { root: 'C', mode: 'major' },
   formulas: (defaultProject as any).formulas || {},
   runtimeOutputs: { viz: {}, synths: {} },
@@ -252,15 +252,45 @@ export const useStore = create<AppState>((set, get) => ({
 
   setActiveTrack: (id) => set({ activeTrackId: id }),
 
-  setSort: (columnName) => set((state) => {
-    const direction = state.sortSettings.column === columnName && state.sortSettings.direction === 'asc' ? 'desc' : 'asc';
+  setSort: (columnName, multi = false) => set((state) => {
+    if (!columnName) return { sortSettings: { criteria: [] } };
+
+    let newCriteria = [...state.sortSettings.criteria];
+    const existingIndex = newCriteria.findIndex(c => c.column === columnName);
+
+    if (multi) {
+      if (existingIndex > -1) {
+        // Toggle direction
+        newCriteria[existingIndex] = {
+          ...newCriteria[existingIndex],
+          direction: newCriteria[existingIndex].direction === 'asc' ? 'desc' : 'asc'
+        };
+      } else {
+        // Add new criteria
+        newCriteria.push({ column: columnName, direction: 'asc' });
+      }
+    } else {
+      // Single column sort
+      const direction = (existingIndex > -1 && newCriteria.length === 1 && newCriteria[0].direction === 'asc') ? 'desc' : 'asc';
+      newCriteria = [{ column: columnName, direction }];
+    }
+
+    // Perform multi-column sort
     const sortedData = [...(state.csvData || [])].sort((a, b) => {
-      const valA = a[columnName!];
-      const valB = b[columnName!];
-      return direction === 'asc' ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+      for (const criterion of newCriteria) {
+        const valA = a[criterion.column];
+        const valB = b[criterion.column];
+        
+        if (valA === valB) continue;
+
+        const comparison = valA > valB ? 1 : -1;
+        return criterion.direction === 'asc' ? comparison : -comparison;
+      }
+      return 0;
     });
+
     return { 
-      sortSettings: { column: columnName, direction },
+      sortSettings: { criteria: newCriteria },
       csvData: sortedData
     };
   }),

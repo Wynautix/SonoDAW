@@ -25,9 +25,9 @@ export const ColumnStat: React.FC<ColumnStatProps> = ({
   
   const getBackground = () => {
     if (mode === 'rainbow') {
-      // Dynamic rainbow shift based on percentage
-      const hue = (clamped * 2.8); // 0-280 range for nice spectrum
-      return `linear-gradient(90deg, hsl(${hue}, 80%, 50%), hsl(${hue + 40}, 80%, 40%))`;
+      // Dynamic rainbow shift based on percentage - broader spectrum
+      const hue = (clamped * 3.6); // 0-360 range for full spectrum
+      return `linear-gradient(90deg, hsl(${hue}, 100%, 60%), hsl(${hue + 60}, 100%, 50%))`;
     }
     if (mode === 'gradient') {
       return `linear-gradient(90deg, ${stops[0]}, ${stops[1]})`;
