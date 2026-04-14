@@ -1,0 +1,6 @@
+.git
+.gitignore
+node_modules/
+dist/
+npm-debug.log
+# Keep Dockerfile, server.js, and deploy.sh (optional but good to have)

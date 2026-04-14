@@ -1,0 +1,125 @@
+.daw-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-dark);
+}
+
+.content-area {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Playbar / Transport */
+.transport-playbar {
+  height: 64px;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 32px;
+  z-index: 1000;
+}
+
+.transport-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-item);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 0 2px transparent;
+}
+
+.transport-btn:hover {
+  background: var(--bg-header);
+  transform: scale(1.05);
+}
+
+.transport-btn.playing {
+  background: var(--accent-primary);
+  color: #000;
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.4);
+}
+
+.playbar-stats {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 0 24px;
+  border-left: 1px solid var(--border);
+}
+
+.bpm-display, .row-display {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.bpm-display input {
+  background: transparent;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 18px;
+  font-weight: 800;
+  width: 60px;
+  outline: none;
+}
+
+.row-display .value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-main);
+  font-family: inherit;
+}
+
+.playbar-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.upload-btn {
+  background: var(--bg-item);
+  border: 1px solid var(--border-bright);
+  color: var(--text-main);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.status-bar {
+  height: 24px;
+  background: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 24px;
+  font-size: 10px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

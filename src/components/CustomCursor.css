@@ -1,0 +1,157 @@
+.custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  /* Remove transition to prevent lag behind hardware cursor */
+}
+
+.custom-cursor.hovering {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.custom-cursor.active {
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+/* --- PIPBOY CURSOR --- */
+.theme-pipboy .pipboy-scanner {
+  position: relative;
+  width: 30px;
+  height: 30px;
+}
+
+.theme-pipboy .crosshair {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 100%; height: 1px;
+  background: var(--accent-primary);
+  transform: translate(-50%, -50%);
+}
+
+.theme-pipboy .crosshair::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  width: 1px; height: 30px;
+  background: var(--accent-primary);
+  transform: translate(-50%, -15px);
+}
+
+.theme-pipboy .ring {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: 1px dashed var(--accent-primary);
+  border-radius: 50%;
+  animation: rotate 4s linear infinite;
+}
+
+.theme-pipboy .coords {
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--accent-primary);
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+/* --- HACKER CURSOR --- */
+.theme-hacker-green .glitch-box,
+.theme-hacker-blue .glitch-box {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--accent-primary);
+  position: relative;
+  background: rgba(0, 255, 157, 0.1);
+}
+
+.theme-hacker-green .terminal-line,
+.theme-hacker-blue .terminal-line {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 1px;
+  height: 20px;
+  background: var(--accent-primary);
+  animation: flicker 0.1s infinite;
+}
+
+/* --- UNICORN CURSOR --- */
+.theme-unicorn .unicorn-sparkle {
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle, #fff 0%, transparent 70%);
+  filter: drop-shadow(0 0 5px var(--accent-primary));
+}
+
+.theme-unicorn .particles span {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--accent-secondary);
+  border-radius: 50%;
+  animation: drift 1s infinite;
+}
+
+.theme-unicorn .particles span:nth-child(2) { animation-delay: 0.3s; }
+.theme-unicorn .particles span:nth-child(3) { animation-delay: 0.6s; }
+
+/* --- TECH BRACKET (DEFAULT) --- */
+.tech-bracket {
+  width: 16px;
+  height: 16px;
+  position: relative;
+}
+
+.tech-bracket .corner {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--accent-primary);
+}
+
+.tech-bracket .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.tech-bracket .tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.tech-bracket .bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.tech-bracket .br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+.tech-bracket .dot {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 2px; height: 2px;
+  background: var(--accent-primary);
+  transform: translate(-50%, -50%);
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+@keyframes drift {
+  0% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(10px, -10px); opacity: 0; }
+}
+
+/* Hybrid Hardware Styles */
+.daw-layout.theme-pipboy { cursor: crosshair; }
+.daw-layout.theme-hacker-green, .daw-layout.theme-hacker-blue { cursor: cell; }
+.daw-layout.theme-unicorn { cursor: help; }
+.daw-layout.theme-standard, .daw-layout.theme-default { cursor: crosshair; }
+
+/* Interactive Overrides */
+.clickable, button, a, input, select {
+  cursor: pointer !important;
+}

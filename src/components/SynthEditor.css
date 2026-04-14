@@ -1,0 +1,191 @@
+.synth-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px; /* Slightly more compact */
+  height: 100%;
+}
+
+.synth-editor.empty {
+  justify-content: center;
+  align-items: center;
+  color: var(--text-dim);
+  gap: 16px;
+}
+
+.synth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.osc-selector {
+  display: flex;
+  background: var(--bg-dark);
+  padding: 4px;
+  border-radius: var(--panel-radius);
+  border: 1px solid var(--border);
+}
+
+.osc-selector button {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  padding: 6px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.osc-selector button.active {
+  background: var(--accent-primary);
+  color: var(--bg-dark);
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.editor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.knobs-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.toggle-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg-dark);
+  color: var(--text-dim);
+  font-weight: 700;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.toggle-btn.active {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow: var(--shadow-neon);
+}
+
+/* Mapping Section */
+.mapping-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-group label {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.input-group input {
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 6px;
+  border-radius: var(--panel-radius);
+  font-family: inherit;
+}
+
+.tech-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.tech-checkbox-label:hover {
+  color: var(--text-main);
+}
+
+.tech-checkbox-label input {
+  display: none;
+}
+
+.tech-checkbox-mark {
+  width: 12px;
+  height: 12px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.tech-checkbox-label input:checked + .tech-checkbox-mark {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary);
+}
+
+.tech-checkbox-label input:checked + .tech-checkbox-mark::after {
+  content: '';
+  position: absolute;
+  top: 1px; left: 1px; right: 1px; bottom: 1px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.tech-checkbox-label input:checked ~ span:not(.tech-checkbox-mark) {
+  color: var(--accent-primary);
+}
+
+/* Custom Scrollbar for VST components */
+.synth-editor::-webkit-scrollbar {
+  width: 6px;
+}
+
+.synth-editor::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.synth-editor::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.synth-editor::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}

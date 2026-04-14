@@ -1,0 +1,41 @@
+.global-settings {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: var(--bg-color);
+  padding: 4px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--panel-border);
+}
+
+.settings-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-group label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.settings-group select {
+  background: transparent;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  text-transform: uppercase;
+}
+
+.settings-group select option {
+  background: var(--bg-color);
+  color: var(--text-main);
+}
