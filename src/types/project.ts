@@ -7,6 +7,8 @@ export interface Track {
   mapping: ColumnMapping;
   mixerChannel: number;
   velocities: number[];
+  volume: number;
+  pan: number;
 }
 
 export interface PanelConfig {
@@ -26,6 +28,7 @@ export interface Project {
   bpm: number;
   mixerEffectChains: Record<number, EffectSettings[]>;
   masterEffectChain: EffectSettings[];
+  masterVolume: number;
   layout: PanelConfig[];
   theme: string;
 }

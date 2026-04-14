@@ -13,6 +13,7 @@ import { AnalyticsView } from './components/AnalyticsView';
 import { NodeEditor } from './components/NodeEditor';
 import { Mixer } from './components/Mixer';
 import { SynthRack } from './components/SynthRack';
+import { Knob } from './components/Knob';
 import { Toast } from './components/Toast';
 import { DropOverlay } from './components/DropOverlay';
 import { GlobalSettings } from './components/GlobalSettings';
@@ -33,7 +34,8 @@ const App: React.FC = () => {
     isPlaying, togglePlayback,
     scaleSettings,
     viewMode, currentRow, setCurrentRow,
-    nodes, edges, columnStats, setRuntimeOutputs, vizConfig, setActiveNotes
+    nodes, edges, columnStats, setRuntimeOutputs, vizConfig, setActiveNotes,
+    updateMasterVolume
   } = useStore();
   
   const [isDragging, setIsDragging] = React.useState(false);
@@ -303,6 +305,16 @@ const App: React.FC = () => {
           <div className="row-display">
             <span className="label">ROW</span>
             <span className="value">{currentRow}</span>
+          </div>
+
+          <div className="master-vol-box">
+             <Knob 
+                label="MASTER" 
+                value={project.masterVolume} 
+                min={0} max={1.5} 
+                onChange={updateMasterVolume}
+                color="var(--accent-primary)"
+             />
           </div>
         </div>
 

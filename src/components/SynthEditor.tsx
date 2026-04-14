@@ -6,7 +6,7 @@ import { ROOTS, ROOT_DISPLAY_NAMES, SCALES, ScaleMode } from '../audio/MusicCons
 import './SynthEditor.css';
 
 export const SynthEditor: React.FC = () => {
-  const { project, activeTrackId, updateTrackSynth, updateTrackMapping } = useStore();
+  const { project, activeTrackId, updateTrackSynth, updateTrackMapping, setFocusedParam, focusedParam } = useStore();
   const activeTrack = project.tracks.find(t => t.id === activeTrackId);
 
   if (!activeTrack) {
@@ -47,24 +47,32 @@ export const SynthEditor: React.FC = () => {
               value={synthSettings.adsr.attack} 
               min={0.001} max={2} 
               onChange={(v) => updateTrackSynth(activeTrack.id, { adsr: { ...synthSettings.adsr, attack: v } })} 
+              onClick={() => setFocusedParam({ trackId: activeTrack.id, paramKey: 'attack', ownerType: 'synth' })}
+              color={focusedParam?.paramKey === 'attack' ? '#fff' : undefined}
             />
             <Knob 
               label="Decay" 
               value={synthSettings.adsr.decay} 
               min={0.01} max={2} 
               onChange={(v) => updateTrackSynth(activeTrack.id, { adsr: { ...synthSettings.adsr, decay: v } })} 
+              onClick={() => setFocusedParam({ trackId: activeTrack.id, paramKey: 'decay', ownerType: 'synth' })}
+              color={focusedParam?.paramKey === 'decay' ? '#fff' : undefined}
             />
             <Knob 
               label="Sustain" 
               value={synthSettings.adsr.sustain} 
               min={0} max={1} 
               onChange={(v) => updateTrackSynth(activeTrack.id, { adsr: { ...synthSettings.adsr, sustain: v } })} 
+              onClick={() => setFocusedParam({ trackId: activeTrack.id, paramKey: 'sustain', ownerType: 'synth' })}
+              color={focusedParam?.paramKey === 'sustain' ? '#fff' : undefined}
             />
             <Knob 
               label="Release" 
               value={synthSettings.adsr.release} 
               min={0.01} max={4} 
               onChange={(v) => updateTrackSynth(activeTrack.id, { adsr: { ...synthSettings.adsr, release: v } })} 
+              onClick={() => setFocusedParam({ trackId: activeTrack.id, paramKey: 'release', ownerType: 'synth' })}
+              color={focusedParam?.paramKey === 'release' ? '#fff' : undefined}
             />
             <Knob 
               label="Gliss" 
@@ -85,12 +93,16 @@ export const SynthEditor: React.FC = () => {
               min={20} max={10000} 
               suffix="Hz"
               onChange={(v) => updateTrackSynth(activeTrack.id, { filter: { ...synthSettings.filter, frequency: v } })} 
+              onClick={() => setFocusedParam({ trackId: activeTrack.id, paramKey: 'cutoff', ownerType: 'synth' })}
+              color={focusedParam?.paramKey === 'cutoff' ? '#fff' : undefined}
             />
             <Knob 
               label="Res" 
               value={synthSettings.filter.resonance} 
               min={0} max={20} 
               onChange={(v) => updateTrackSynth(activeTrack.id, { filter: { ...synthSettings.filter, resonance: v } })} 
+              onClick={() => setFocusedParam({ trackId: activeTrack.id, paramKey: 'resonance', ownerType: 'synth' })}
+              color={focusedParam?.paramKey === 'resonance' ? '#fff' : undefined}
             />
           </div>
         </section>

@@ -10,10 +10,11 @@ interface KnobProps {
   onChange: (val: number) => void;
   suffix?: string;
   color?: string;
+  onClick?: () => void;
 }
 
 export const Knob: React.FC<KnobProps> = ({ 
-  label, value, min, max, onChange, suffix = '', color = 'var(--accent-primary)' 
+  label, value, min, max, onChange, suffix = '', color = 'var(--accent-primary)', onClick
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const startY = useRef(0);
@@ -48,6 +49,10 @@ export const Knob: React.FC<KnobProps> = ({
       <div 
         className="knob-outer" 
         onMouseDown={handleMouseDown}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick?.();
+        }}
         style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
         <motion.div 

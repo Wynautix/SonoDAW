@@ -1,10 +1,17 @@
 import React from 'react';
 import { useStore } from '../store/useStore';
-import { Plus, Power, Volume2, Trash2 } from 'lucide-react';
+import { Plus, Power, Volume2, Trash2, Sliders } from 'lucide-react';
+import { Knob } from './Knob';
 import './SynthRack.css';
 
 export const SynthRack: React.FC = () => {
-  const { project, updateProject, removeTrack, addTrack, activeTrackId, setActiveTrack, toggleMute } = useStore();
+  const { 
+    project, updateProject, removeTrack, addTrack, 
+    activeTrackId, setActiveTrack, toggleMute, 
+    updateTrackMixer, viewMode, currentRow, setCurrentRow,
+    nodes, edges, columnStats, setRuntimeOutputs, vizConfig, setActiveNotes,
+    updateMasterVolume
+  } = useStore();
 
   const onDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -51,14 +58,20 @@ export const SynthRack: React.FC = () => {
             </div>
 
             <div className="track-params">
-              <div className="mini-knob-group">
-                <div className="mini-label">PAN</div>
-                <div className="mini-knob"></div>
-              </div>
-              <div className="mini-knob-group">
-                <div className="mini-label">VOL</div>
-                <div className="mini-knob"></div>
-              </div>
+              <Knob 
+                label="PAN" 
+                value={track.pan} 
+                min={-1} max={1} 
+                onChange={(val) => updateTrackMixer(track.id, { pan: val })}
+                color="var(--accent-secondary)"
+              />
+              <Knob 
+                label="VOL" 
+                value={track.volume} 
+                min={0} max={1.5} 
+                onChange={(val) => updateTrackMixer(track.id, { volume: val })}
+                color="var(--accent-primary)"
+              />
             </div>
 
             <div className="track-routing">

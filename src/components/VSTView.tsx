@@ -2,6 +2,7 @@ import React from 'react';
 import { useStore } from '../store/useStore';
 import { Settings, Sliders, X, Square } from 'lucide-react';
 import { SynthEditor } from './SynthEditor';
+import { Knob } from './Knob';
 import './VSTView.css';
 
 export const VSTView: React.FC = () => {
@@ -10,7 +11,9 @@ export const VSTView: React.FC = () => {
     activeTrackId, 
     project, 
     updateEffectParam,
-    setActiveEffect
+    setActiveEffect,
+    focusedParam,
+    updateTrackSynth
   } = useStore();
 
   const selectedTrack = project.tracks.find(t => t.id === activeTrackId);
@@ -67,8 +70,33 @@ export const VSTView: React.FC = () => {
             <span className="vst-name">{selectedTrack.name} (SYNTH)</span>
           </div>
         </div>
-        <div className="vst-body">
+        <div className="vst-body synth-layout">
           <SynthEditor />
+          {focusedParam && focusedParam.trackId === activeTrackId && (
+            <div className="focused-lfo-panel fade-in">
+              <div className="lfo-visualizer">
+                <div className="lfo-title">LFO MODULATION: {focusedParam.paramKey.toUpperCase()}</div>
+                <div className="knobs-row">
+                   <Knob 
+                    label="LFO RATE" 
+                    value={selectedTrack.synthSettings.lfo.frequency} 
+                    min={0.1} max={20} 
+                    suffix="Hz"
+                    onChange={(v) => updateTrackSynth(selectedTrack.id, { lfo: { ...selectedTrack.synthSettings.lfo, frequency: v } })} 
+                  />
+                  <Knob 
+                    label="LFO DEPTH" 
+                    value={selectedTrack.synthSettings.lfo.amount} 
+                    min={0} max={1000} 
+                    onChange={(v) => updateTrackSynth(selectedTrack.id, { lfo: { ...selectedTrack.synthSettings.lfo, amount: v } })} 
+                  />
+                  <div className="lfo-target-info">
+                    TARGET: {selectedTrack.synthSettings.lfo.target}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );

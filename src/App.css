@@ -58,10 +58,17 @@
   border-left: 1px solid var(--border);
 }
 
-.bpm-display, .row-display {
+.bpm-display, .row-display, .master-vol-box {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.master-vol-box {
+  padding-left: 16px;
+  border-left: 1px solid var(--border);
+  height: 44px;
+  justify-content: center;
 }
 
 .label {

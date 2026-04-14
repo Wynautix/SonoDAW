@@ -9,8 +9,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './LayoutManager.css';
 
 export const LayoutManager: React.FC = () => {
-  const { project, viewMode } = useStore();
+  const { project, viewMode, updateProject } = useStore();
   const { layout } = project;
+
+  const handleResize = (id: string, dir: 'w' | 'h', delta: number) => {
+    const newLayout = layout.map(p => {
+      if (p.id === id) {
+        return {
+          ...p,
+          [dir]: Math.max(1, Math.min(10, p[dir] + delta))
+        };
+      }
+      return p;
+    });
+    updateProject({ layout: newLayout });
+  };
 
   const renderPanelContent = (type: string) => {
     switch (type) {
@@ -69,6 +82,11 @@ export const LayoutManager: React.FC = () => {
 
               {/* Barcode/Pattern */}
               <div className="greeble-barcode" style={{ position: 'absolute', bottom: '6px', right: '30px' }}></div>
+
+              <div className="panel-resize horizontal" onClick={(e) => { e.stopPropagation(); handleResize(panel.id, 'w', 1); }}>+</div>
+              <div className="panel-resize vertical" onClick={(e) => { e.stopPropagation(); handleResize(panel.id, 'h', 1); }}>+</div>
+              <div className="panel-resize horizontal-dec" onClick={(e) => { e.stopPropagation(); handleResize(panel.id, 'w', -1); }}>-</div>
+              <div className="panel-resize vertical-dec" onClick={(e) => { e.stopPropagation(); handleResize(panel.id, 'h', -1); }}>-</div>
 
               {renderPanelContent(panel.type)}
             </div>

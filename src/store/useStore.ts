@@ -3,6 +3,7 @@ import { Project, Track, PanelConfig } from '../types/project';
 import { SynthSettings, ColumnMapping, EffectSettings, EffectType } from '../types/synth';
 import { ScaleMode } from '../audio/MusicConstants';
 import * as Tone from 'tone';
+import { mixerEngine } from '../audio/MixerEngine';
 import Papa from 'papaparse';
 import { Node, Edge, OnNodesChange, OnEdgesChange, OnConnect, applyNodeChanges, applyEdgeChanges, addEdge } from 'reactflow';
 import defaultProject from '../data/defaultProject.json';
@@ -19,7 +20,8 @@ interface AppState {
   activeEffectId: string | null; // Selected effect ID for VST editor
   viewMode: '3d' | 'synth' | 'data' | 'analytics' | 'nodes' | 'mixer' | 'rack';
   currentRow: number;
-  activeNotes: Record<string, string | null>; // TrackID -> NoteName
+  activeNotes: Record<string, string | null>; 
+  focusedParam: { trackId: string; paramKey: string; ownerType: 'synth' | 'fx' } | null;
   
   // Node Editor State
   nodes: Node[];
@@ -98,6 +100,7 @@ interface AppState {
   updateColorRule: (id: string, rule: Partial<AppState['vizConfig']['colorRules'][0]>) => void;
   setCurrentRow: (row: number) => void;
   setActiveNotes: (notes: Record<string, string | null>) => void;
+  setFocusedParam: (param: AppState['focusedParam']) => void;
   addTrack: (columnName: string) => void;
   removeTrack: (id: string) => void;
   toggleMute: (trackId: string) => void;
@@ -125,12 +128,14 @@ interface AppState {
   addNotification: (message: string, type?: 'info' | 'success' | 'error') => void;
   removeNotification: (id: string) => void;
   updateProject: (project: Partial<Project>) => void;
+  updateMasterVolume: (volume: number) => void;
+  updateTrackMixer: (trackId: string, params: { volume?: number; pan?: number }) => void;
   setViewMode: (mode: AppState['viewMode']) => void;
   updateGridConfig: (config: Partial<AppState['gridConfig']>) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
-  project: (defaultProject as any).project,
+  project: { ...(defaultProject as any).project, masterVolume: (defaultProject as any).project.masterVolume ?? 0.8 },
   csvData: (defaultProject as any).csvData,
   headers: (defaultProject as any).headers,
   virtualHeaders: (defaultProject as any).virtualHeaders || [],
@@ -142,6 +147,7 @@ export const useStore = create<AppState>((set, get) => ({
   viewMode: 'analytics',
   currentRow: 0,
   activeNotes: {},
+  focusedParam: null,
   sortSettings: { criteria: [] },
   scaleSettings: (defaultProject as any).scaleSettings || { root: 'C', mode: 'major' },
   formulas: (defaultProject as any).formulas || {},
@@ -337,6 +343,27 @@ export const useStore = create<AppState>((set, get) => ({
     };
   }),
 
+  updateMasterVolume: (volume) => set((state) => {
+    Tone.Destination.volume.rampTo(Tone.gainToDb(volume), 0.1);
+    return {
+      project: { ...state.project, masterVolume: volume }
+    };
+  }),
+
+  updateTrackMixer: (trackId, params) => set((state) => {
+    const newTracks = state.project.tracks.map(t => {
+      if (t.id === trackId) {
+        const updated = { ...t, ...params };
+        const channel = mixerEngine.getChannel(t.mixerChannel);
+        if (params.volume !== undefined) channel.volume.rampTo(Tone.gainToDb(params.volume), 0.1);
+        if (params.pan !== undefined) channel.pan.rampTo(params.pan, 0.1);
+        return updated;
+      }
+      return t;
+    });
+    return { project: { ...state.project, tracks: newTracks } };
+  }),
+
   setViewMode: (mode) => set({ viewMode: mode }),
   
   updateVizConfig: (config) => set((state) => ({ 
@@ -347,9 +374,8 @@ export const useStore = create<AppState>((set, get) => ({
     gridConfig: { ...state.gridConfig, ...config } 
   })),
 
-  setActiveNotes: (notes) => set((state) => ({ 
-    activeNotes: { ...state.activeNotes, ...notes } 
-  })),
+  setActiveNotes: (notes) => set({ activeNotes: notes }),
+  setFocusedParam: (param) => set({ focusedParam: param }),
 
   addColorRule: (rule) => set((state) => ({
     vizConfig: {
@@ -381,7 +407,9 @@ export const useStore = create<AppState>((set, get) => ({
       id,
       name: columnName,
       mixerChannel: 0,
-      velocities: new Array(state.csvData?.length || 0).fill(0.8),
+      velocities: new Array(128).fill(100),
+      volume: 0.8,
+      pan: 0,
       synthSettings: {
         id: `synth-${id}`,
         name: `Synth for ${columnName}`,

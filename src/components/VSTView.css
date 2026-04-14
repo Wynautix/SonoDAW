@@ -41,9 +41,45 @@
 }
 
 .vst-body {
-  flex: 1;
-  overflow: auto;
-  padding: 16px;
+  padding: 12px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.synth-layout {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+}
+
+.focused-lfo-panel {
+  flex: 0 0 240px;
+  background: rgba(0, 0, 0, 0.4);
+  border-left: 1px solid var(--border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.lfo-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--accent-primary);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.lfo-target-info {
+  margin-top: 12px;
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
 }
 
 .vst-body.fx-params {
