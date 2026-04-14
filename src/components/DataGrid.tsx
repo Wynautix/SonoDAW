@@ -15,16 +15,28 @@ export const DataGrid: React.FC = () => {
 
   const gridRef = React.useRef<HTMLDivElement>(null);
   const playingRowRef = React.useRef<HTMLTableRowElement>(null);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [containerHeight, setContainerHeight] = useState(600);
 
   // Auto-scroll logic (Instant lock for performance)
   React.useEffect(() => {
-    if (gridConfig.autoScroll && playingRowRef.current) {
+    if (gridConfig.autoScroll && playingRowRef.current && !isNaN(currentRow)) {
       playingRowRef.current.scrollIntoView({
         behavior: 'auto',
         block: 'center'
       });
     }
   }, [currentRow, gridConfig.autoScroll]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setScrollTop(e.currentTarget.scrollTop);
+  };
+
+  React.useEffect(() => {
+    if (gridRef.current) {
+        setContainerHeight(gridRef.current.clientHeight);
+    }
+  }, []);
 
   // Refined Zoom logic with event listener override
   React.useEffect(() => {
@@ -91,6 +103,16 @@ export const DataGrid: React.FC = () => {
       </div>
     );
   }
+
+  // Virtualization constants - Now safely after null check
+  const rowHeight = 44 * gridConfig.zoom;
+  const buffer = 5;
+  const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
+  const endIndex = Math.min(csvData.length, Math.floor((scrollTop + containerHeight) / rowHeight) + buffer);
+  const visibleData = csvData.slice(startIndex, endIndex);
+  
+  const topSpacerHeight = startIndex * rowHeight;
+  const bottomSpacerHeight = (csvData.length - endIndex) * rowHeight;
 
   return (
     <div className="data-grid panel">
@@ -164,6 +186,7 @@ export const DataGrid: React.FC = () => {
       <div 
         className="grid-wrapper" 
         ref={gridRef}
+        onScroll={handleScroll}
         style={{ '--grid-zoom': gridConfig.zoom } as any}
       >
         <table className="spreadsheet">
@@ -201,7 +224,9 @@ export const DataGrid: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {csvData.map((row, idx) => {
+            <tr style={{ height: topSpacerHeight }} className="spacer-row"><td colSpan={allHeaders.length + 1}></td></tr>
+            {visibleData.map((row, relativeIdx) => {
+              const idx = startIndex + relativeIdx;
               // Row color based on primary numeric column or average
               const firstNumHeader = allHeaders.find(h => typeof row[h] === 'number');
               const rowColor = firstNumHeader ? getCellColor(row[firstNumHeader], firstNumHeader) : 'var(--accent-primary)';
@@ -211,7 +236,7 @@ export const DataGrid: React.FC = () => {
                   key={idx} 
                   className={currentRow === idx ? 'playing' : ''}
                   ref={currentRow === idx ? playingRowRef : null}
-                  style={{ '--row-color': rowColor } as any}
+                  style={{ '--row-color': rowColor, height: rowHeight } as any}
                 >
                   <td className="row-num" onClick={() => (window as any).setCurrentRow?.(idx)}>{idx + 1}</td>
                   {allHeaders.map(h => {
@@ -252,6 +277,7 @@ export const DataGrid: React.FC = () => {
                 </tr>
               );
             })}
+            <tr style={{ height: bottomSpacerHeight }} className="spacer-row"><td colSpan={allHeaders.length + 1}></td></tr>
           </tbody>
         </table>
       </div>

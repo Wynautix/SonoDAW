@@ -172,17 +172,32 @@
   white-space: nowrap;
 }
 
-/* Row and Cell Borders */
+/* Row and Cell Styling */
 .spreadsheet tr {
-  border: 4px solid var(--row-color, transparent);
-  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--border);
+  transition: transform 0.1s ease;
+}
+
+.spreadsheet tr.spacer-row {
+  border: none !important;
+  background: transparent !important;
+  pointer-events: none;
+}
+
+.spreadsheet tr.spacer-row td {
+  border: none !important;
 }
 
 .spreadsheet td {
   color: var(--text-main);
   opacity: calc(var(--grid-zoom) * 2 - 0.1);
-  border: 2px solid var(--cell-color, var(--border)) !important;
+  border: 1px solid var(--border);
+  position: relative;
   transition: all 0.2s ease;
+}
+
+.spreadsheet td:not(.row-num) {
+  background: color-mix(in srgb, var(--cell-color, transparent) 12%, transparent);
 }
 
 /* Sticky Header & Sidebar Integration */
